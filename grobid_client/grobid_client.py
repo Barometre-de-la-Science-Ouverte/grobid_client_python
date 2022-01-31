@@ -12,6 +12,7 @@ files in directories and would require something scalable too (e.g. done in a
 separate thread), which is not implemented for the moment and possibly not
 implementable in Python as long it uses the GIL.
 """
+import gzip
 import os
 import io
 import json
@@ -113,8 +114,9 @@ class GrobidClient(ApiClient):
 
         for (dirpath, dirnames, filenames) in os.walk(input_path):
             for filename in filenames:
-                if filename.endswith(".pdf") or filename.endswith(".PDF") or \
-                    (service == 'processCitationList' and (filename.endswith(".txt") or filename.endswith(".TXT"))):
+                if filename.endswith(".pdf") or filename.endswith(".PDF")\
+                    or filename.endswith(".pdf.gz")\
+                    or (service == 'processCitationList' and (filename.endswith(".txt") or filename.endswith(".TXT"))):
                     if verbose:
                         try:
                             print(filename)
@@ -239,7 +241,7 @@ class GrobidClient(ApiClient):
         files = {
             "input": (
                 pdf_file,
-                open(pdf_file, "rb"),
+                gzip.open(pdf_file, "rb") if pdf_file.endswith('.pdf.gz') else open(pdf_file, "rb"),
                 "application/pdf",
                 {"Expires": "0"},
             )
