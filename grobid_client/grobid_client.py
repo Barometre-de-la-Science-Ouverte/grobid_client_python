@@ -109,6 +109,10 @@ class GrobidClient(ApiClient):
         force=True,
         verbose=False,
     ):
+        start_time = time.time()
+        nb_total = 0
+        print(f"\nGrobid - total process: {nb_total} - accumulated runtime: 0 s - 0 PDF/s\n")
+
         batch_size_pdf = self.config["batch_size"]
         input_files = []
 
@@ -119,7 +123,7 @@ class GrobidClient(ApiClient):
                     or (service == 'processCitationList' and (filename.endswith(".txt") or filename.endswith(".TXT"))):
                     if verbose:
                         try:
-                            print(filename)
+                            print(f"Grobid - {filename}")
                         except Exception:
                             # may happen on linux see https://stackoverflow.com/questions/27366479/python-3-os-walk-file-paths-unicodeencodeerror-utf-8-codec-cant-encode-s
                             pass
@@ -142,6 +146,9 @@ class GrobidClient(ApiClient):
                             force,
                             verbose,
                         )
+                        runtime = round(time.time() - start_time, 3)
+                        nb_total += len(input_files)
+                        print(f"\nGrobid - total process: {nb_total} - accumulated runtime: {runtime}s - {round(nb_total/runtime, 2)} PDF/s\n")
                         input_files = []
 
         # last batch
@@ -181,7 +188,7 @@ class GrobidClient(ApiClient):
         verbose=False,
     ):
         if verbose:
-            print(len(input_files), "files to process in current batch")
+            print(f"\nGrobid - {len(input_files)} files to process in current batch\n")
 
         # with concurrent.futures.ThreadPoolExecutor(max_workers=n) as executor:
         with concurrent.futures.ProcessPoolExecutor(max_workers=n) as executor:
@@ -190,7 +197,7 @@ class GrobidClient(ApiClient):
                 # check if TEI file is already produced
                 filename = self._output_file_name(input_file, input_path, output)
                 if not force and os.path.isfile(filename):
-                    print(filename, "already exist, skipping... (use --force to reprocess pdf input files)")
+                    print(f"Grobid - {filename} already exist, skipping... (use --force to reprocess pdf input files)")
                     continue
 
                 selected_process = self.process_pdf
@@ -216,7 +223,7 @@ class GrobidClient(ApiClient):
             filename = self._output_file_name(input_file, input_path, output)
 
             if text is None:
-                print("Processing of", input_file, "failed with error", str(status))
+                print(f"Grobid - Processing of {input_file} failed with error {status}")
             else:
                 # writing TEI file
                 try:
@@ -224,7 +231,7 @@ class GrobidClient(ApiClient):
                     with open(filename,'w',encoding='utf8') as tei_file:
                         tei_file.write(text)
                 except OSError:
-                   print("Writing resulting TEI XML file", filename, "failed")
+                   print(f"Grobid - Writing resulting TEI XML file {filename} failed")
 
     def process_pdf(
         self,
