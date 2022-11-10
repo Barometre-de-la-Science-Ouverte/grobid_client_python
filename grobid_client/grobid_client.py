@@ -68,7 +68,7 @@ class GrobidClient(ApiClient):
             the_url += ":" + self.config["grobid_port"]
         the_url += "/api/isalive"
         try:
-            r = requests.get(the_url)
+            r = self.get(url=the_url)
         except:
             print("GROBID server does not appear up and running, the connection to the server failed")
             raise ServerUnavailableException

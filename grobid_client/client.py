@@ -35,6 +35,7 @@ class ApiClient(object):
         self.api_key = api_key
         self.status_endpoint = urljoin(self.base_url, status_endpoint)
         self.timeout = timeout
+        self.session = requests.Session()
 
     @staticmethod
     def encode(request, data):
@@ -118,7 +119,7 @@ class ApiClient(object):
         files = files or {}
         # if self.username is not None and self.api_key is not None:
         #    params.update(self.get_credentials())
-        r = requests.request(
+        r = self.session.request(
             method,
             url,
             headers=headers,
