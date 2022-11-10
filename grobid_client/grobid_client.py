@@ -49,6 +49,8 @@ class GrobidClient(ApiClient):
             'sleep_time': sleep_time,
             'timeout': timeout
         }
+        if not self.session:
+            self._init_session()
         if config_path:
             self._load_config(config_path)
         if check_server:

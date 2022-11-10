@@ -35,6 +35,8 @@ class ApiClient(object):
         self.api_key = api_key
         self.status_endpoint = urljoin(self.base_url, status_endpoint)
         self.timeout = timeout
+
+    def _init_session(self):
         self.session = requests.Session()
 
     @staticmethod
