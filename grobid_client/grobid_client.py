@@ -284,7 +284,7 @@ class GrobidClient(ApiClient):
 
         try:
             res, status = self.post(
-                url=the_url, files=files, data=the_data, headers={"Accept": "text/plain"}, timeout=self.config['timeout']
+                url=the_url, files=files, data=the_data, headers={"Accept": "application/xml"}, timeout=self.config['timeout']
             )
 
             if status == 503:
