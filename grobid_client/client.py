@@ -115,7 +115,7 @@ class ApiClient(object):
             ResultParser or ErrorParser.
         """
         headers = deepcopy(headers) or {}
-        headers["Accept"] = self.accept_type
+        headers["Accept"] = headers.get("Accept", self.accept_type)
         params = deepcopy(params) or {}
         data = data or {}
         files = files or {}

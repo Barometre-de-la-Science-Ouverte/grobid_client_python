@@ -49,7 +49,7 @@ class GrobidClient(ApiClient):
             'sleep_time': sleep_time,
             'timeout': timeout
         }
-        if not self.session:
+        if not hasattr(self, "session"):
             self._init_session()
         if config_path:
             self._load_config(config_path)
@@ -70,7 +70,7 @@ class GrobidClient(ApiClient):
             the_url += ":" + self.config["grobid_port"]
         the_url += "/api/isalive"
         try:
-            r = self.get(url=the_url)
+            r, _ = self.get(url=the_url, headers={'Accept': '*/*'})
         except:
             print("GROBID server does not appear up and running, the connection to the server failed")
             raise ServerUnavailableException
