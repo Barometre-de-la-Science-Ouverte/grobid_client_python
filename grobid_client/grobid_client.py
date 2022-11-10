@@ -298,7 +298,8 @@ class GrobidClient(ApiClient):
                     tei_coordinates,
                     segment_sentences
                 )
-        except requests.exceptions.ReadTimeout:
+        except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
+            print(e)
             return (pdf_file, 408, None)
 
         return (pdf_file, status, res.text)
